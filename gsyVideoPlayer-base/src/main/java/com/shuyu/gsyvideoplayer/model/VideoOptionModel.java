@@ -15,13 +15,13 @@ public class VideoOptionModel {
 
     int category;
 
-    int valueInt;
+    long valueInt;
 
     String name;
 
     String valueString;
 
-    public VideoOptionModel(int category, String name, int value) {
+    public VideoOptionModel(int category, String name, long value) {
         super();
         this.category = category;
         this.name = name;
@@ -53,11 +53,11 @@ public class VideoOptionModel {
         this.category = category;
     }
 
-    public int getValueInt() {
+    public long getValueInt() {
         return valueInt;
     }
 
-    public void setValueInt(int valueInt) {
+    public void setValueInt(long valueInt) {
         this.valueInt = valueInt;
         valueType = VALUE_TYPE_INT;
     }

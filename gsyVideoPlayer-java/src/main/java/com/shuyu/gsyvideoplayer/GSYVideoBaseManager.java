@@ -3,12 +3,12 @@ package com.shuyu.gsyvideoplayer;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
-import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.Surface;
+
+import androidx.annotation.Nullable;
 
 import com.shuyu.gsyvideoplayer.cache.CacheFactory;
 import com.shuyu.gsyvideoplayer.cache.ICacheManager;
@@ -322,6 +322,11 @@ public abstract class GSYVideoBaseManager implements IMediaPlayer.OnPreparedList
             }
         });
         return false;
+    }
+
+    @Override
+    public boolean onInfo2(IMediaPlayer iMediaPlayer, int what, int extra, long l) {
+        return onInfo(iMediaPlayer,what,extra);
     }
 
     @Override

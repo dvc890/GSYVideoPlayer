@@ -52,7 +52,7 @@ public class IjkPlayerManager implements IPlayerManager {
 
     @Override
     public void initVideoPlayer(Context context, Message msg, List<VideoOptionModel> optionModelList, ICacheManager cacheManager) {
-        mediaPlayer = (ijkLibLoader == null) ? new IjkMediaPlayer() : new IjkMediaPlayer(ijkLibLoader);
+        mediaPlayer = (ijkLibLoader == null) ? new IjkMediaPlayer(context) : new IjkMediaPlayer(ijkLibLoader, context);
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mediaPlayer.setOnNativeInvokeListener(new IjkMediaPlayer.OnNativeInvokeListener() {
             @Override
@@ -60,7 +60,6 @@ public class IjkPlayerManager implements IPlayerManager {
                 return true;
             }
         });
-
         GSYModel gsyModel = (GSYModel) msg.obj;
         String url = gsyModel.getUrl();
 
@@ -94,7 +93,7 @@ public class IjkPlayerManager implements IPlayerManager {
             if (gsyModel.getSpeed() != 1 && gsyModel.getSpeed() > 0) {
                 mediaPlayer.setSpeed(gsyModel.getSpeed());
             }
-            mediaPlayer.native_setLogLevel(logLevel);
+//            mediaPlayer.native_setLogLevel(logLevel);
             initIJKOption(mediaPlayer, optionModelList);
         } catch (IOException e) {
             e.printStackTrace();
