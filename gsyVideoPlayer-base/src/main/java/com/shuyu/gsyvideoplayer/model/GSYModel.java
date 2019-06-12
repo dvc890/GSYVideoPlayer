@@ -1,5 +1,7 @@
 package com.shuyu.gsyvideoplayer.model;
 
+import android.os.Bundle;
+
 import java.io.File;
 import java.util.Map;
 
@@ -9,6 +11,8 @@ import java.util.Map;
  */
 
 public class GSYModel {
+
+    Bundle dash;
 
     String url;
 
@@ -24,6 +28,16 @@ public class GSYModel {
 
     String overrideExtension;
 
+    public GSYModel(Bundle res, Map<String, String> mapHeadData, boolean loop, float speed, boolean isCache, File cachePath, String overrideExtension) {
+        this.dash = res;
+        this.mapHeadData = mapHeadData;
+        this.looping = loop;
+        this.speed = speed;
+        this.isCache = isCache;
+        this.mCachePath = cachePath;
+        this.overrideExtension = overrideExtension;
+    }
+
     public GSYModel(String url, Map<String, String> mapHeadData, boolean loop, float speed, boolean isCache, File cachePath, String overrideExtension) {
         this.url = url;
         this.mapHeadData = mapHeadData;
@@ -32,6 +46,14 @@ public class GSYModel {
         this.isCache = isCache;
         this.mCachePath = cachePath;
         this.overrideExtension = overrideExtension;
+    }
+
+    public Bundle getDash() {
+        return dash;
+    }
+
+    public void setDash(Bundle dash) {
+        this.dash = dash;
     }
 
     public String getUrl() {
