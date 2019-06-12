@@ -1,6 +1,7 @@
 package com.shuyu.gsyvideoplayer.video.base;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.Surface;
 
 import com.shuyu.gsyvideoplayer.listener.GSYMediaPlayerListener;
@@ -43,6 +44,7 @@ public interface GSYVideoViewBridge {
      * @param cachePath   缓存目录，可以为空，为空时使用默认
      */
     void prepare(final String url, final Map<String, String> mapHeadData, boolean loop, float speed, boolean cache, File cachePath);
+    void prepare(final Bundle dashRes, final Map<String, String> mapHeadData, boolean loop, float speed, boolean cache, File cachePath);
 
     /**
      * 开始准备播放
@@ -56,6 +58,7 @@ public interface GSYVideoViewBridge {
      * @param overrideExtension   是否需要覆盖拓展类型
      */
     void prepare(final String url, final Map<String, String> mapHeadData, boolean loop, float speed, boolean cache, File cachePath, String overrideExtension);
+    void prepare(final Bundle dashRes, final Map<String, String> mapHeadData, boolean loop, float speed, boolean cache, File cachePath, String overrideExtension);
 
     /**
      * 获取当前播放内核

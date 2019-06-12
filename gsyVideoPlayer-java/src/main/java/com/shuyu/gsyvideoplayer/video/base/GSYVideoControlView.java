@@ -3,11 +3,9 @@ package com.shuyu.gsyvideoplayer.video.base;
 import android.app.Activity;
 import android.content.Context;
 import android.media.AudioManager;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import androidx.annotation.AttrRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
@@ -21,6 +19,11 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import androidx.annotation.AttrRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.shuyu.gsyvideoplayer.R;
 import com.shuyu.gsyvideoplayer.listener.GSYVideoProgressListener;
 import com.shuyu.gsyvideoplayer.listener.LockClickListener;
@@ -31,7 +34,6 @@ import java.io.File;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-
 
 import static com.shuyu.gsyvideoplayer.utils.CommonUtil.hideNavKey;
 
@@ -532,20 +534,6 @@ public abstract class GSYVideoControlView extends GSYVideoView implements View.O
         return false;
     }
 
-
-    /**
-     * 设置播放URL
-     *
-     * @param url           播放url
-     * @param cacheWithPlay 是否边播边缓存
-     * @param title         title
-     * @return
-     */
-    @Override
-    public boolean setUp(String url, boolean cacheWithPlay, String title) {
-        return setUp(url, cacheWithPlay, (File) null, title);
-    }
-
     /**
      * 设置播放URL
      *
@@ -558,6 +546,24 @@ public abstract class GSYVideoControlView extends GSYVideoView implements View.O
     @Override
     public boolean setUp(String url, boolean cacheWithPlay, File cachePath, String title) {
         if (super.setUp(url, cacheWithPlay, cachePath, title)) {
+            if (title != null && mTitleTextView != null) {
+                mTitleTextView.setText(title);
+            }
+            if (mIfCurrentIsFullscreen) {
+                if (mFullscreenButton != null)
+                    mFullscreenButton.setImageResource(getShrinkImageRes());
+            } else {
+                if (mFullscreenButton != null)
+                    mFullscreenButton.setImageResource(getEnlargeImageRes());
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean setDashUp(Bundle dashRes, boolean cacheWithPlay, File cachePath, String title, int videoid) {
+        if (super.setDashUp(dashRes, cacheWithPlay, cachePath, title, videoid)) {
             if (title != null && mTitleTextView != null) {
                 mTitleTextView.setText(title);
             }

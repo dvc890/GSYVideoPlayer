@@ -2,6 +2,7 @@ package com.shuyu.gsyvideoplayer;
 
 import android.content.Context;
 import android.media.MediaPlayer;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -196,6 +197,10 @@ public abstract class GSYVideoBaseManager implements IMediaPlayer.OnPreparedList
     public void prepare(String url, Map<String, String> mapHeadData, boolean loop, float speed, boolean cache, File cachePath) {
         prepare(url, mapHeadData, loop, speed, cache, cachePath, null);
     }
+    @Override
+    public void prepare(final Bundle dashRes, final Map<String, String> mapHeadData, boolean loop, float speed, boolean cache, File cachePath) {
+        prepare(dashRes, mapHeadData, loop, speed, cache, cachePath, null);
+    }
 
     @Override
     public void prepare(final String url, final Map<String, String> mapHeadData, boolean loop, float speed, boolean cache, File cachePath, String overrideExtension) {
@@ -203,6 +208,19 @@ public abstract class GSYVideoBaseManager implements IMediaPlayer.OnPreparedList
         Message msg = new Message();
         msg.what = HANDLER_PREPARE;
         GSYModel fb = new GSYModel(url, mapHeadData, loop, speed, cache, cachePath, overrideExtension);
+        msg.obj = fb;
+        sendMessage(msg);
+        if (needTimeOutOther) {
+            startTimeOutBuffer();
+        }
+    }
+
+    @Override
+    public void prepare(final Bundle dashRes, final Map<String, String> mapHeadData, boolean loop, float speed, boolean cache, File cachePath, String overrideExtension) {
+        if (dashRes == null) return;
+        Message msg = new Message();
+        msg.what = HANDLER_PREPARE;
+        GSYModel fb = new GSYModel(dashRes, mapHeadData, loop, speed, cache, cachePath, overrideExtension);
         msg.obj = fb;
         sendMessage(msg);
         if (needTimeOutOther) {

@@ -4,8 +4,6 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.net.TrafficStats;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.view.Surface;
 
@@ -15,7 +13,6 @@ import com.shuyu.gsyvideoplayer.model.GSYModel;
 import com.shuyu.gsyvideoplayer.model.VideoOptionModel;
 import com.shuyu.gsyvideoplayer.player.IPlayerManager;
 
-import java.text.DecimalFormat;
 import java.util.List;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
@@ -59,7 +56,7 @@ public class Exo2PlayerManager implements IPlayerManager {
             mediaPlayer.setPreview(gsyModel.getMapHeadData() != null && gsyModel.getMapHeadData().size() > 0);
             if (gsyModel.isCache() && cacheManager != null) {
                 //通过管理器处理
-                cacheManager.doCacheLogic(context, mediaPlayer, gsyModel.getUrl(), gsyModel.getMapHeadData(), gsyModel.getCachePath());
+                cacheManager.doCacheLogic(context, mediaPlayer, gsyModel, gsyModel.getMapHeadData(), gsyModel.getCachePath());
             } else {
                 //通过自己的内部缓存机制
                 mediaPlayer.setCache(gsyModel.isCache());
