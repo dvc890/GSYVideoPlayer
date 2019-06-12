@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import com.danikula.videocache.CacheListener;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.danikula.videocache.file.Md5FileNameGenerator;
+import com.shuyu.gsyvideoplayer.model.GSYModel;
 import com.shuyu.gsyvideoplayer.utils.CommonUtil;
 import com.shuyu.gsyvideoplayer.utils.FileUtils;
 import com.shuyu.gsyvideoplayer.utils.StorageUtils;
@@ -16,6 +17,8 @@ import java.io.IOException;
 import java.util.Map;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
+import tv.danmaku.ijk.media.player.IjkMediaMeta;
+import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 /**
  代理缓存管理器
@@ -57,8 +60,8 @@ public class ProxyCacheManager implements ICacheManager, CacheListener {
     }
 
     @Override
-    public void doCacheLogic(Context context, IMediaPlayer mediaPlayer, String originUrl, Map<String, String> header, File cachePath) {
-        String url = originUrl;
+    public void doCacheLogic(Context context, IMediaPlayer mediaPlayer, GSYModel model, Map<String, String> header, File cachePath) {
+        String url = model.getUrl();
         userAgentHeadersInjector.mMapHeadData.clear();
         if (header != null) {
             userAgentHeadersInjector.mMapHeadData.putAll(header);
@@ -71,7 +74,7 @@ public class ProxyCacheManager implements ICacheManager, CacheListener {
                 mCacheFile = (!url.startsWith("http"));
                 //注册上缓冲监听
                 if (!mCacheFile) {
-                    proxy.registerCacheListener(this, originUrl);
+                    proxy.registerCacheListener(this, model.getUrl());
                 }
             }
         } else if ((!url.startsWith("http") && !url.startsWith("rtmp")
@@ -79,7 +82,14 @@ public class ProxyCacheManager implements ICacheManager, CacheListener {
             mCacheFile = true;
         }
         try {
-            mediaPlayer.setDataSource(context, Uri.parse(url), header);
+            if(model.isDashRes() && mediaPlayer instanceof IjkMediaPlayer) {
+                //将代理地址重新存入到数据包
+                model.getDashRes().getBundle(IjkMediaMeta.IJKM_DASH_KEY_VIDEO_264)
+                        .getBundle(IjkMediaMeta.IJKM_DASH_KEY_BASE_URL)
+                        .putString(model.getDashVideoCurId()+"", url);
+                ((IjkMediaPlayer) mediaPlayer).setDashDataSource(model.getDashRes(), 0, model.getDashVideoCurId());
+            } else
+                mediaPlayer.setDataSource(context, Uri.parse(url), header);
         } catch (IOException e) {
             e.printStackTrace();
         }

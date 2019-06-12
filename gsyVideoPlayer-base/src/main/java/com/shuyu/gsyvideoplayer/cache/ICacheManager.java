@@ -2,6 +2,8 @@ package com.shuyu.gsyvideoplayer.cache;
 
 import android.content.Context;
 
+import com.shuyu.gsyvideoplayer.model.GSYModel;
+
 import java.io.File;
 import java.util.Map;
 
@@ -18,11 +20,11 @@ public interface ICacheManager {
      * 开始缓存逻辑
      *
      * @param mediaPlayer 播放内核
-     * @param url         播放url
+     * @param model         播放信息
      * @param header      头部信息
      * @param cachePath   缓存路径，可以为空
      */
-    void doCacheLogic(Context context, IMediaPlayer mediaPlayer, String url, Map<String, String> header, File cachePath);
+    void doCacheLogic(Context context, IMediaPlayer mediaPlayer, GSYModel model, Map<String, String> header, File cachePath);
 
     /**
      * 清除缓存

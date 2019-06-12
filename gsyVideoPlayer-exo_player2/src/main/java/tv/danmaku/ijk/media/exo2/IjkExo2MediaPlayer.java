@@ -5,10 +5,10 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
-import androidx.annotation.Nullable;
-import androidx.annotation.Size;
 import android.view.Surface;
 import android.view.SurfaceHolder;
+
+import androidx.annotation.Size;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -482,7 +482,7 @@ public class IjkExo2MediaPlayer extends AbstractMediaPlayer implements Player.Ev
                 switch (playbackState) {
                     case Player.STATE_ENDED:
                     case Player.STATE_READY:
-                        notifyOnInfo(IMediaPlayer.MEDIA_INFO_BUFFERING_END, mInternalPlayer.getBufferedPercentage());
+                        notifyOnInfo(IMediaPlayer.MEDIA_INFO_BUFFERING_END, mInternalPlayer.getBufferedPercentage(), 0);
                         isBuffering = false;
                         break;
                 }
@@ -499,7 +499,7 @@ public class IjkExo2MediaPlayer extends AbstractMediaPlayer implements Player.Ev
 
             switch (playbackState) {
                 case Player.STATE_BUFFERING:
-                    notifyOnInfo(IMediaPlayer.MEDIA_INFO_BUFFERING_START, mInternalPlayer.getBufferedPercentage());
+                    notifyOnInfo(IMediaPlayer.MEDIA_INFO_BUFFERING_START, mInternalPlayer.getBufferedPercentage(), 0);
                     isBuffering = true;
                     break;
                 case Player.STATE_READY:
@@ -560,7 +560,7 @@ public class IjkExo2MediaPlayer extends AbstractMediaPlayer implements Player.Ev
 
     @Override
     public void onPositionDiscontinuity(EventTime eventTime, int reason) {
-        notifyOnInfo(ON_POSITION_DISCOUNTINUITY, reason);
+        notifyOnInfo(ON_POSITION_DISCOUNTINUITY, reason, 0);
     }
 
     @Override
@@ -699,7 +699,7 @@ public class IjkExo2MediaPlayer extends AbstractMediaPlayer implements Player.Ev
         mVideoHeight = height;
         notifyOnVideoSizeChanged(width, height, 1, 1);
         if (unappliedRotationDegrees > 0)
-            notifyOnInfo(IMediaPlayer.MEDIA_INFO_VIDEO_ROTATION_CHANGED, unappliedRotationDegrees);
+            notifyOnInfo(IMediaPlayer.MEDIA_INFO_VIDEO_ROTATION_CHANGED, unappliedRotationDegrees, 0);
     }
 
     @Override

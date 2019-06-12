@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 
 import com.shuyu.gsyvideoplayer.cache.ICacheManager;
+import com.shuyu.gsyvideoplayer.model.GSYModel;
 
 import java.io.File;
 import java.util.Map;
@@ -20,7 +21,7 @@ public class ExoPlayerCacheManager implements ICacheManager {
     protected ExoSourceManager mExoSourceManager;
 
     @Override
-    public void doCacheLogic(Context context, IMediaPlayer mediaPlayer, String url, Map<String, String> header, File cachePath) {
+    public void doCacheLogic(Context context, IMediaPlayer mediaPlayer, GSYModel gsyModel, Map<String, String> header, File cachePath) {
         if (!(mediaPlayer instanceof IjkExo2MediaPlayer)) {
             throw new UnsupportedOperationException("ExoPlayerCacheManager only support IjkExo2MediaPlayer");
         }
@@ -29,7 +30,7 @@ public class ExoPlayerCacheManager implements ICacheManager {
         //通过自己的内部缓存机制
         exoPlayer.setCache(true);
         exoPlayer.setCacheDir(cachePath);
-        exoPlayer.setDataSource(context, Uri.parse(url), header);
+        exoPlayer.setDataSource(context, Uri.parse(gsyModel.getUrl()), header);
     }
 
     @Override

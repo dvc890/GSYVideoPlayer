@@ -7,17 +7,20 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import androidx.annotation.AttrRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.InflateException;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+
+import androidx.annotation.AttrRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.shuyu.gsyvideoplayer.R;
 import com.shuyu.gsyvideoplayer.listener.GSYMediaPlayerListener;
@@ -29,6 +32,9 @@ import com.shuyu.gsyvideoplayer.utils.NetInfoModule;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+
+import tv.danmaku.ijk.media.player.IjkMediaMeta;
+
 import static com.shuyu.gsyvideoplayer.utils.CommonUtil.getTextSpeed;
 
 /**
@@ -130,6 +136,7 @@ public abstract class GSYVideoView extends GSYTextureRenderView implements GSYMe
 
     //原来的url
     protected String mOriginUrl;
+    protected Bundle mDashRes;
 
     //转化后的URL
     protected String mUrl;
@@ -331,7 +338,10 @@ public abstract class GSYVideoView extends GSYTextureRenderView implements GSYMe
         mAudioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
         ((Activity) getActivityContext()).getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mBackUpPlayingBufferState = -1;
-        getGSYVideoManager().prepare(mUrl, (mMapHeadData == null) ? new HashMap<String, String>() : mMapHeadData, mLooping, mSpeed, mCache, mCachePath, mOverrideExtension);
+        if(mDashRes == null)
+            getGSYVideoManager().prepare(mUrl, (mMapHeadData == null) ? new HashMap<String, String>() : mMapHeadData, mLooping, mSpeed, mCache, mCachePath, mOverrideExtension);
+        else
+            getGSYVideoManager().prepare(mDashRes, (mMapHeadData == null) ? new HashMap<String, String>() : mMapHeadData, mLooping, mSpeed, mCache, mCachePath, mOverrideExtension);
         setStateAndUi(CURRENT_STATE_PREPAREING);
     }
 
@@ -410,6 +420,9 @@ public abstract class GSYVideoView extends GSYTextureRenderView implements GSYMe
     public boolean setUp(String url, boolean cacheWithPlay, String title) {
         return setUp(url, cacheWithPlay, ((File) null), title);
     }
+    public boolean setDashUp(Bundle dashRes, boolean cacheWithPlay, String title, int videoid) {
+        return setDashUp(dashRes, cacheWithPlay, ((File) null), title, videoid);
+    }
 
 
     /**
@@ -437,6 +450,21 @@ public abstract class GSYVideoView extends GSYTextureRenderView implements GSYMe
         return false;
     }
 
+    public boolean setDashUp(Bundle dashRes, boolean cacheWithPlay, File cachePath, Map<String, String> mapHeadData, String title, int videoid) {
+        if (setDashUp(dashRes, cacheWithPlay, cachePath, title, videoid)) {
+            if (this.mMapHeadData != null) {
+                this.mMapHeadData.clear();
+            } else {
+                this.mMapHeadData = new HashMap<>();
+            }
+            if (mapHeadData != null) {
+                this.mMapHeadData.putAll(mapHeadData);
+            }
+            return true;
+        }
+        return false;
+    }
+
     /**
      * 设置播放URL
      *
@@ -448,6 +476,9 @@ public abstract class GSYVideoView extends GSYTextureRenderView implements GSYMe
      */
     public boolean setUp(String url, boolean cacheWithPlay, File cachePath, String title) {
         return setUp(url, cacheWithPlay, cachePath, title, true);
+    }
+    public boolean setDashUp(Bundle dashRes, boolean cacheWithPlay, File cachePath, String title, int videoid) {
+        return setDashUp(dashRes, cacheWithPlay, cachePath, title, videoid, true);
     }
 
     /**
@@ -463,7 +494,8 @@ public abstract class GSYVideoView extends GSYTextureRenderView implements GSYMe
     protected boolean setUp(String url, boolean cacheWithPlay, File cachePath, String title, boolean changeState) {
         mCache = cacheWithPlay;
         mCachePath = cachePath;
-        mOriginUrl = url;
+        if(!TextUtils.isEmpty(url))
+            mOriginUrl = url;
         if (isCurrentMediaListener() &&
                 (System.currentTimeMillis() - mSaveChangeViewTIme) < CHANGE_DELAY_TIME)
             return false;
@@ -475,6 +507,14 @@ public abstract class GSYVideoView extends GSYTextureRenderView implements GSYMe
         return true;
     }
 
+    protected boolean setDashUp(Bundle dashRes, boolean cacheWithPlay, File cachePath, String title, int videoid, boolean changeState) {
+        this.mDashRes = dashRes;
+        this.mOriginUrl = dashRes.getBundle(IjkMediaMeta.IJKM_DASH_KEY_VIDEO_264)
+                .getBundle(IjkMediaMeta.IJKM_DASH_KEY_BASE_URL)
+                .getString(videoid+"", "");
+        this.mDashRes.putInt(IjkMediaMeta.IJKM_DASH_KEY_CUR_VIDEO_ID, videoid);
+        return setUp(null, cacheWithPlay, cachePath, title, changeState);
+    }
 
     /**
      * 重置

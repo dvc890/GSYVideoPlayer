@@ -61,8 +61,6 @@ public class IjkPlayerManager implements IPlayerManager {
             }
         });
         GSYModel gsyModel = (GSYModel) msg.obj;
-        String url = gsyModel.getUrl();
-
 
         try {
             //开启硬解码
@@ -74,18 +72,23 @@ public class IjkPlayerManager implements IPlayerManager {
             }
 
             if (gsyModel.isCache() && cacheManager != null) {
-                cacheManager.doCacheLogic(context, mediaPlayer, url, gsyModel.getMapHeadData(), gsyModel.getCachePath());
+                cacheManager.doCacheLogic(context, mediaPlayer, gsyModel, gsyModel.getMapHeadData(), gsyModel.getCachePath());
             } else {
-                if (!TextUtils.isEmpty(url)) {
-                    Uri uri = Uri.parse(url);
-                    if (uri.getScheme().equals(ContentResolver.SCHEME_ANDROID_RESOURCE)) {
-                        RawDataSourceProvider rawDataSourceProvider = RawDataSourceProvider.create(context, uri);
-                        mediaPlayer.setDataSource(rawDataSourceProvider);
+                if(gsyModel.isDashRes()) {
+                    mediaPlayer.setDashDataSource(gsyModel.getDashRes(), 0 , gsyModel.getDashVideoCurId());
+                } else {
+                    String url = gsyModel.getUrl();
+                    if (!TextUtils.isEmpty(url)) {
+                        Uri uri = Uri.parse(url);
+                        if (uri.getScheme().equals(ContentResolver.SCHEME_ANDROID_RESOURCE)) {
+                            RawDataSourceProvider rawDataSourceProvider = RawDataSourceProvider.create(context, uri);
+                            mediaPlayer.setDataSource(rawDataSourceProvider);
+                        } else {
+                            mediaPlayer.setDataSource(url, gsyModel.getMapHeadData());
+                        }
                     } else {
                         mediaPlayer.setDataSource(url, gsyModel.getMapHeadData());
                     }
-                } else {
-                    mediaPlayer.setDataSource(url, gsyModel.getMapHeadData());
                 }
             }
 
